@@ -1,0 +1,66 @@
+version: '2'
+
+services:
+  seedbox:
+    image: linuxserver/transmission:latest
+    networks:
+      - traefik
+    ports:
+      - "51413:51413"
+    volumes:
+      - "multimedia-movies:/downloads/movies"
+      - "multimedia-series:/downloads/series"
+      - "multimedia-others:/downloads/others"
+      - "seedbox-config:/config"
+      - "seedbox-watch:/watch"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - TRANSMISSION_WEB_HOME=/combustion-release/
+    labels:
+      - "traefik.frontend.rule=Host:seedbox.<DOMAIN_NAME>"
+      - "traefik.port=9091"
+      - "traefik.backend=seedbox"
+    restart: unless-stopped
+
+  plex:
+    image: linuxserver/plex:latest
+    networks:
+      - traefik
+    ports:
+      - "1900:1900/udp"
+      - "32400:32400"
+      - "32469:32469"
+      - "5353:5353/udp"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - VERSION=docker
+    labels:
+      - "traefik.frontend.rule=Host:plex.<DOMAIN_NAME>"
+      - "traefik.port=32400"
+      - "traefik.backend=plex"
+    volumes:
+      - "multimedia-movies:/data/movies"
+      - "multimedia-series:/data/tvshows"
+      - "plex-config:/config"
+    restart: unless-stopped
+
+  files:
+    image: filebrowser/filebrowser
+    networks:
+      - traefik
+    labels:
+      - "traefik.frontend.rule=Host:files.<DOMAIN_NAME>"
+      - "traefik.port=80"
+      - "traefik.backend=files"
+    volumes:
+      - "multimedia-movies:/srv/multimedia-movies"
+      - "multimedia-series:/srv/multimedia-series"
+      - "multimedia-others:/srv/multimedia-others"
+      - "plex-config:/srv/plex-config"
+      - "seedbox-config:/srv/seedbox-config"
+      - "seedbox-watch:/srv/seedbox-watch"
+    restart: unless-stopped
