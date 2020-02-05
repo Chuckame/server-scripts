@@ -86,7 +86,7 @@ version: '2'
 
 services:
   proxy:
-    image: traefik
+    image: traefik:v1.7
     networks:
       - traefik
     ports:
