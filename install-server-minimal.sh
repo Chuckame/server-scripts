@@ -60,7 +60,7 @@ PS2="\└ "
 alias rm='rm -I'
 alias l='ls -la --color=always -p --time-style="+%Y:%m:%d-%H%M%S%-:::z"'
 alias upd='apt-get update'
-alias upg='apt-get --with-new-pkgs upgrade && apt-get dist-upgrade'
+alias upg='apt-get --with-new-pkgs upgrade && apt-get dist-upgrade && apt autoremove'
 alias upda='upd && upg'
 alias ..='cd ..'
 EOF
