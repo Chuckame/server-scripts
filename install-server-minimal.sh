@@ -105,6 +105,10 @@ EOF
   service sshd restart
 }
 
+install_docker() {
+    curl -fsSL https://get.docker.com | sudo bash
+}
+
 main() {
   touch minimal_install_fail
   fix_locales
@@ -112,6 +116,7 @@ main() {
   install_base_packages
   set_prompt
   set_sshd_conf
+  install_docker
   rm minimal_install_fail
 }
 
