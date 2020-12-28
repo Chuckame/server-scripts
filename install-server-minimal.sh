@@ -49,7 +49,7 @@ do_upgrade() {
 }
 
 install_base_packages() {
-  apt-get --assume-yes install sudo tmux bash-completion ca-certificates
+  apt-get --assume-yes install sudo tmux bash-completion ca-certificates jq
   apt-get --assume-yes install git lm-sensors nano curl
 }
 
@@ -107,6 +107,16 @@ EOF
 
 install_docker() {
     curl -fsSL https://get.docker.com | sudo bash
+
+    compose_version=$(curl https://api.github.com/repos/docker/compose/releases/latest | jq .name -r)
+    output='/usr/local/bin/docker-compose'
+    curl -L https://github.com/docker/compose/releases/download/${compose_version}/docker-compose-$(uname -s)-$(uname -m) -o $output
+    chmod +x $output
+    echo $(docker-compose --version)
+}
+
+gen_id_rsa() {
+  ssh-keygen -q -t rsa -N '' -f /root/.ssh/id_rsa
 }
 
 main() {
@@ -115,6 +125,7 @@ main() {
   do_upgrade
   install_base_packages
   set_prompt
+  gen_id_rsa
   set_sshd_conf
   install_docker
   rm minimal_install_fail
