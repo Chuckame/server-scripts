@@ -63,6 +63,9 @@ alias upd='apt-get update'
 alias upg='apt-get --with-new-pkgs upgrade && apt-get dist-upgrade && apt autoremove'
 alias upda='upd && upg'
 alias ..='cd ..'
+alias dc='docker-compose'
+alias dcu='dc up -d --remove-orphans'
+alias dcus='for d in ./*/ ; do (cd "$d" && dcu); done'
 EOF
 }
 
@@ -87,8 +90,8 @@ Port $SSH_PORT
 Protocol 2
 SyslogFacility AUTH
 LogLevel INFO
-LoginGraceTime 120
-ClientAliveInterval 30
+LoginGraceTime 120 # 2 mins
+ClientAliveInterval 300 # 5 mins
 ClientAliveCountMax 0
 IgnoreRhosts yes
 PermitEmptyPasswords no
